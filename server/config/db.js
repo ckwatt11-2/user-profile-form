@@ -1,12 +1,24 @@
-const mongoose = require('mongoose');
+const { MongoClient } = require('mongodb')
 
-const connectDB = async () => {
+
+let dbInstance = null; 
+
+
+async function connectDB()  {
+
+    if (dbInstance) return dbInstance; 
+
     try {
-        await mongoose.connect(process.env.MONGODB_URI, {
-            userNewUrlParser: true,
+        const client = new MongoClient(process.env.MONGODB_URI, {
+            useNewUrlParser: true, 
             useUnifiedTopology: true
         });
-        console.log("Database connected!")
+
+        await client.connect();
+        dbInstance = client.db(process.env.DB_NAME || 'profileApp');
+        console.log("Database Connected!")
+        return dbInstance   ;
+
     }
     catch (err){
         console.log(`Error: ${err.message}`);
@@ -14,4 +26,16 @@ const connectDB = async () => {
     }
 };
 
-module.exports = connectDB;
+
+function getDB() { 
+    if (!dbInstance) throw new Error('Database not initialized.');
+    return dbInstance; 
+}
+
+const closeConnection = async () => {
+    if (client){
+        await client.close();
+    }
+};
+
+module.exports = { connectDB, closeConnection, getDB, getClient: () => client };
