@@ -9,6 +9,9 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
+
+app.use('/api/users', require('./routes/userRoutes')); // routes via APIs
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI, {
@@ -21,6 +24,11 @@ mongoose.connect(process.env.MONGODB_URI, {
 // Basic route
 app.get('/', (req, res) => {
   res.send('Profile API Running');
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Server error' });
 });
 
 // Start server

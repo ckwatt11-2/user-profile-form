@@ -1,18 +1,23 @@
 # Dependencies
 node_modules/
 
-# Environment variables
+# Environment files
 .env
+.env.local
 
-# Uploads directory
+# Uploaded files
 server/uploads/
 
-# Build files
-client/build/
+# Logs
+*.log
+
+# System files
+.DS_Store
 
 # Editor files
 .vscode/
 .idea/
 
-# Logs
-*.log
+# Frontend build
+client/dist/
+client/build/
